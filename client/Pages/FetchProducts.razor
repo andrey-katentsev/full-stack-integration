@@ -1,0 +1,33 @@
+@page "/fetchproducts"
+@inject HttpClient http
+@using shared;
+
+<h3>Product List</h3>
+<ul>
+@if (products != null)
+{
+	foreach (var product in products)
+	{
+		<li>@product.Category.Name : @product.Name - $@product.Price</li>
+	}
+}
+else
+{
+	<li>Loading...</li>
+}
+</ul>
+
+@code {
+private Product[]? products;
+protected override async Task OnInitializedAsync()
+{
+	try
+	{
+		products = await http.GetFromJsonAsync<Product[]>("http://localhost:5243/api/productlist");
+	}
+	catch (Exception error)
+	{
+		Console.WriteLine($"Failed to fetch product list: {error.Message}");
+	}
+}
+}
